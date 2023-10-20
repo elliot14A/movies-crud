@@ -1,0 +1,99 @@
+version: "3"
+services:
+  database:
+    image: postgres:11.7-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./volumes/postgresql:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=movies-crud
+    healthcheck:
+      interval: 10s
+      retries: 10
+      timeout: 2s
+    networks:
+      - movies-crud
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9002:9002"
+    volumes:
+      - ~/factly/movies-crud/minio/data:/export
+      - ~/factly/movies-crud/minio/config:/root/.minio
+    environment:
+      - MINIO_ACCESS_KEY=miniokey
+      - MINIO_SECRET_KEY=miniosecret
+    networks:
+      - movies-crud
+    command: server -console-address :9002 /export
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+    networks:
+      - movies-crud
+    entrypoint: >
+      /bin/sh -c " apk add --no-cache bash; wait-for-it.sh minio:9000 -- echo 'Minio is up. Creating the bucket!!'; /usr/bin/mc config host add myminio http://minio:9000 miniokey miniosecret; /usr/bin/mc mb myminio/movies-crud; /usr/bin/mc anonymous set public myminio/movies-crud; exit 0; "
+
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - movies-crud 
+    volumes:
+      - type: bind
+        source: ./src
+        target: /src
+      - /node_modules
+      - /prisma
+    restart: unless-stopped
+    stdin_open: true
+    depends_on:
+      - database
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: ./web
+        target: /app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+    stdin_open: true
+    networks:
+      - movies-crud 
+
+  oathkeeper:
+    image: oryd/oathkeeper:latest-alpine
+    ports:
+      - "4455:4455"
+      - "4456:4456"
+    environment:
+      - LOG_LEVEL=debug
+    volumes:
+      - type: bind
+        source: ./oathkeeper
+        target: /etc/config/oathkeeper
+    command: serve proxy -c "/etc/config/oathkeeper/.oathkeeper.yml"
+    restart: on-failure
+    networks:
+      - movies-crud
+
+networks:
+  movies-crud:
