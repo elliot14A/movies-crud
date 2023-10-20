@@ -10,13 +10,13 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DATABASE=movies-crud
     healthcheck:
       interval: 10s
       retries: 10
       timeout: 2s
     networks:
       - movies-crud
+
   minio:
     image: minio/minio
     ports:
@@ -45,22 +45,24 @@ services:
 
   server:
     build:
-      context: ./
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - 8080:8080
-    networks:
-      - movies-crud 
     volumes:
       - type: bind
-        source: ./src
+        source: ./server
         target: /src
       - /node_modules
       - /prisma
     restart: unless-stopped
     stdin_open: true
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@database:5432/postgres?schem=public
     depends_on:
       - database
+    networks:
+      - movies-crud
 
   web:
     build:
@@ -76,8 +78,10 @@ services:
       - /app/.next
     restart: unless-stopped
     stdin_open: true
+    depends_on:
+      - server
     networks:
-      - movies-crud 
+      - movies-crud
 
   oathkeeper:
     image: oryd/oathkeeper:latest-alpine

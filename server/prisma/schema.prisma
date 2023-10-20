@@ -12,18 +12,17 @@ datasource db {
 
 model User {
   id        String    @unique @default(uuid())
-  name      String
   email     String    @unique
+  name      String?
+  password  String
   createdAt DateTime  @default(now())
-  updateAt  DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt
   Session   Session[]
 }
 
 model Session {
-  id        String   @unique @default(uuid())
-  valid     Boolean  @default(true)
-  User      User     @relation(fields: [UserId], references: [id])
-  UserId    String
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  id     String  @unique @default(uuid())
+  valid  Boolean
+  User   User    @relation(fields: [UserId], references: [id])
+  UserId String
 }

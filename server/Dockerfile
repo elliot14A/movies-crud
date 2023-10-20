@@ -20,10 +20,7 @@ RUN npm install --frozen-lockfile
 
 
 COPY ./src ./
-COPY ./prisma ./ 
 COPY ./tsconfig.json ./
-
-RUN npx prisma migrate
 
 RUN npm run build
 
