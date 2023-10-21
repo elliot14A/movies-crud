@@ -1,3 +1,6 @@
-export default function Home() {
-  return <h1>Hello</h1>;
+import { FC } from "react"
+const Page: FC = () => {
+  return <h1 className="text-blue-300">Hello World</h1>
 }
+
+export default Page
