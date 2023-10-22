@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import http from "http";
 import logger from "./utils/logger";
+import { routes } from "./routes";
 
 async function main() {
   dotenv.config();
@@ -20,11 +21,7 @@ async function main() {
       ":remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
     ),
   );
-
-  app.get("/health", (_, res) => {
-    return res.status(200).send("OK");
-  });
-
+  app.use("/api", routes());
   const PORT = process.env.PORT || 8080;
   const server = http.createServer(app);
   server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));

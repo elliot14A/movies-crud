@@ -11,7 +11,7 @@ primsa.$use(async (params, next) => {
       {},
     );
   }
-  next(params);
+  return next(params);
 });
 
 export default primsa;

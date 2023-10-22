@@ -1,15 +1,30 @@
 import { z } from "zod";
 
 export const createUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6).max(100),
-  name: z.string().min(3).max(100).optional(),
+  body: z.object({
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(6, "password should contain atleast 6 chars")
+      .max(100),
+    name: z
+      .string()
+      .min(3, "name should contain atleast 3 chars")
+      .max(100)
+      .optional(),
+  }),
 });
 
 export const updateUserSchema = z
   .object({
-    email: z.string().email().optional(),
-    name: z.string().min(3).max(100).optional(),
+    body: z.object({
+      email: z.string().email().optional(),
+      name: z
+        .string()
+        .min(3, "name should contain atleast 3 chars")
+        .max(100)
+        .optional(),
+    }),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field is required",
