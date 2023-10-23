@@ -29,14 +29,15 @@ model Session {
 }
 
 model Movie {
-  id        String   @unique @default(uuid())
-  title     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [UserId], references: [id])
-  UserId    String
-  imageUrl  String
-  cast      String[]
-  genre     String
-  release   String
+  id          String   @unique @default(uuid())
+  title       String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [UserId], references: [id])
+  UserId      String
+  imageUrl    String
+  cast        String[]
+  genre       String
+  release     String
+  description String
 }

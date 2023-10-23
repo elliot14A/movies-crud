@@ -12,6 +12,7 @@ export async function create({
   UserId,
   User,
   imageUrl,
+  description,
   release,
 }: Prisma.MovieCreateInput & { UserId: string }): Promise<Movie> {
   try {
@@ -32,6 +33,7 @@ export async function create({
         genre,
         cast,
         User,
+        description,
         imageUrl,
         release,
       },
