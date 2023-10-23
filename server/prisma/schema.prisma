@@ -38,6 +38,6 @@ model Movie {
   imageUrl    String
   cast        String[]
   genre       String
-  release     String
+  release     DateTime
   description String
 }

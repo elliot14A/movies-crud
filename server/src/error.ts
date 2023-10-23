@@ -2,6 +2,7 @@ export enum ApiErrorType {
   EntityAlreadyExist,
   NotFound,
   InternalServerError,
+  ValidationError,
 }
 
 export class ApiError extends Error {

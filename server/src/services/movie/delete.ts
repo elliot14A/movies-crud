@@ -4,7 +4,7 @@ import { Result } from "@badrap/result";
 import { ApiError, ApiErrorType } from "../../error";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export async function Delete(where: Prisma.MovieWhereInput) {
+export default async function Delete(where: Prisma.MovieWhereInput) {
   try {
     const exists = await prisma.movie.count({ where });
     if (exists === 0) {

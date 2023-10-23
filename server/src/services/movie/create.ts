@@ -3,9 +3,12 @@ import { Movie } from ".";
 import prisma from "../../utils/database";
 import { Result } from "@badrap/result";
 import { ApiError, ApiErrorType } from "../../error";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
 
-export async function create({
+export default async function create({
   title,
   genre,
   cast,
@@ -39,16 +42,26 @@ export async function create({
       },
     });
     return Result.ok(movie);
-  } catch (e) {
+  } catch (e: any) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return Result.err(
           new ApiError(ApiErrorType.EntityAlreadyExist, e.message),
         );
       }
+      if (e.code === "P2025") {
+        return Result.err(
+          new ApiError(
+            ApiErrorType.InternalServerError,
+            "Something went wrong",
+          ),
+        );
+      }
+    } else if (e instanceof PrismaClientValidationError) {
+      return Result.err(new ApiError(ApiErrorType.ValidationError, e.message));
     } else if (e instanceof Error) {
       return Result.err(
-        new ApiError(ApiErrorType.EntityAlreadyExist, e.message),
+        new ApiError(ApiErrorType.InternalServerError, e.message),
       );
     }
     return Result.err(

@@ -5,7 +5,9 @@ import { Result } from "@badrap/result";
 import { ApiError, ApiErrorType } from "../../error";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export async function update(data: Prisma.MovieUpdateInput): Promise<Movie> {
+export default async function update(
+  data: Prisma.MovieUpdateInput,
+): Promise<Movie> {
   try {
     const exists = await prisma.movie.count({
       where: { id: data.id?.toString() },

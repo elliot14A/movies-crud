@@ -5,13 +5,13 @@ import { ApiError, ApiErrorType } from "../../error";
 import { Result } from "@badrap/result";
 import prisma from "../../utils/database";
 
-export async function details(where: Prisma.MovieWhereInput): Promise<Movie> {
+export default async function details(
+  where: Prisma.MovieWhereInput,
+): Promise<Movie> {
   try {
     const movie = await prisma.movie.findFirst({ where });
     if (!movie) {
-      return Result.err(
-        new ApiError(ApiErrorType.NotFound, "Session not found"),
-      );
+      return Result.err(new ApiError(ApiErrorType.NotFound, "Movie not found"));
     }
     return Result.ok(movie);
   } catch (e) {
