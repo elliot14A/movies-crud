@@ -1,0 +1,59 @@
+[
+  {
+    "id": "movies-crud:web:protected",
+    "upstream": {
+      "preserve_host": true,
+      "url": "http://web:3000"
+    },
+    "match": {
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/web/home",
+      "methods": ["GET", "POST", "DELETE"]
+    },
+    "authenticators": [
+      {
+        "handler": "cookie_session"
+      }
+    ],
+    "errors": [
+      {
+        "handler": "redirect",
+        "config": {
+          "to": "http://127.0.0.1:4455/.taskphin/movies-crud/web/auth/login",
+          "return_to_query_param": "return_to"
+        }
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [
+      {
+        "handler": "noop"
+      }
+    ]
+  },
+  {
+    "id": "movies-crud:web:public",
+    "upstream": {
+      "preserve_host": true,
+      "url": "http://web:3000"
+    },
+    "match": {
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/web/<_next/.*|auth/login|auth/register>",
+      "methods": ["GET", "POST", "DELETE"]
+    },
+    "authenticators": [
+      {
+        "handler": "anonymous"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [
+      {
+        "handler": "noop"
+      }
+    ]
+  }
+]

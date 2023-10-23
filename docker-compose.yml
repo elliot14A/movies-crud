@@ -79,6 +79,9 @@ services:
       - /app/node_modules
       - /app/.next
     restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_BASE_PATH=/.taskphin/movies-crud/web
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:4455/.taskphin/movies-crud/server
     stdin_open: true
     networks:
       - movies-crud
