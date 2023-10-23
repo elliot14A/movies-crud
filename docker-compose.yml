@@ -47,8 +47,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - 8080:8080
     volumes:
       - type: bind
         source: ./server
@@ -70,8 +68,6 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile.dev
-    ports:
-      - 3000:3000
     volumes:
       - type: bind
         source: ./web
@@ -81,7 +77,7 @@ services:
     restart: unless-stopped
     environment:
       - NEXT_PUBLIC_BASE_PATH=/.taskphin/movies-crud/web
-      - NEXT_PUBLIC_SERVER_URL=http://localhost:4455/.taskphin/movies-crud/server
+      - NEXT_PUBLIC_SERVER_URL=http://127.0.0.1:4455/.taskphin/movies-crud/server
     stdin_open: true
     networks:
       - movies-crud

@@ -1,7 +1,6 @@
 log:
   level: debug
   format: json
-  leak_sensitive_values: true
 
 serve:
   proxy:
