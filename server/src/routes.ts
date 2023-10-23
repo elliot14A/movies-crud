@@ -17,6 +17,7 @@ import {
   getMovieByIdSchema,
   updateMovieSchema,
 } from "./schemas/movie";
+import logout from "./controllers/session/logout";
 
 function authRouter(): express.Router {
   const router = express.Router();
@@ -47,12 +48,15 @@ function movieRoutes(): express.Router {
 export function routes(): express.Router {
   const router = express.Router();
   router.use("/auth", authRouter());
-  router.get("/health", (req, res) => {
-    console.log(req.headers);
+  router.get("/protected", authGuard(), (_, res) => {
+    return res.sendStatus(200);
+  });
+  router.get("/health", (_, res) => {
     return res.sendStatus(200);
   });
   router.use("/sessions", sessionRoutes());
   router.use("/movies", movieRoutes());
+  router.post("/auth/logout", authGuard(), logout);
 
   return router;
 }

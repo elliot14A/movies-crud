@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
 import cookie from "cookie";
 import { Claims, TokenType, signJwt, verifyJwt } from "../../utils/jwt";
-import { details } from "../../services/session/details";
+import { validSession } from ".";
 
 export async function whoami(req: Request, res: Response) {
   const cookies = req.headers.cookie;
   let cookiesJSON = cookie.parse(cookies || "");
   // check for movies_crud_session cookie
   // if not present, return 401
-  const accessToken = cookiesJSON["movies_crud_session"];
-  const refreshToken = cookiesJSON["x-refresh-token"];
+  const accessToken = cookiesJSON["movies-crud-session-cookie"];
+  const refreshToken = cookiesJSON["movies-crud-refresh-cookie"];
   let response: Record<string, any> = {};
   if (!accessToken) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   const { decoded, expired } = verifyJwt(accessToken, TokenType.AccessToken);
-  console.log(decoded, expired);
   // if expired, check for refresh token
   // if refresh token is present, create new access token
   if (expired) {
@@ -28,7 +27,6 @@ export async function whoami(req: Request, res: Response) {
       refreshToken,
       TokenType.RefreshToken,
     );
-    console.log(newDecoded, newExpired);
     if (newExpired || !newDecoded) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -56,20 +54,4 @@ export async function whoami(req: Request, res: Response) {
   }
   response["subject"] = decoded.userId;
   return res.status(200).json(response);
-}
-
-async function validSession(payload: Claims): Promise<boolean> {
-  const { sessionId, userId }: Claims = payload;
-  const sessionResult = await details({ id: sessionId, UserId: userId });
-  console.log(sessionResult);
-  if (sessionResult.isErr) {
-    return false;
-  }
-
-  const { valid } = sessionResult.value;
-  if (!valid) {
-    return false;
-  }
-
-  return true;
 }

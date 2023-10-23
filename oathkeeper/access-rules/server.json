@@ -7,7 +7,7 @@
       "strip_path": "/.taskphin/movies-crud/server"
     },
     "match": {
-      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/auth/<login|register>",
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/auth/<login|register|health>",
       "methods": ["POST"]
     },
     "authenticators": [
@@ -32,7 +32,7 @@
       "strip_path": "/.taskphin/movies-crud/server"
     },
     "match": {
-      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/health",
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/<(protected|movies/.*|auth/logout)>",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"]
     },
     "authenticators": [

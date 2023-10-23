@@ -63,11 +63,13 @@ authenticators:
   cookie_session:
     enabled: true
     config:
+      force_method: "GET"
       check_session_url: http://server:8080/api/sessions/whoami
       extra_from: "@this"
       preserve_path: true
       only:
-        - movies_crud_session
+        - movies-crud-session-cookie
+        - movies-crud-refresh-cookie
 
 mutators:
   header:
