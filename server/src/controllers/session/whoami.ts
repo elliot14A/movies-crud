@@ -48,6 +48,7 @@ export async function whoami(req: Request, res: Response) {
   }
   // if not expired, check if session is still valid
   const valid = await validSession(decoded);
+  console.log(valid, decoded);
 
   if (!valid) {
     return res.status(401).json({ message: "Unauthorized" });

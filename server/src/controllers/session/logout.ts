@@ -22,19 +22,21 @@ export default async function logout(
     refreshToken,
     TokenType.RefreshToken,
   );
-  if (!AccessDecoded || !RefreshDecoded) return res.status(401);
-  // invlidate refresh token
-  await update({
-    id: RefreshDecoded.sessionId,
-    UserId,
-    valid: false,
-  });
-  // invlidate access token
-  await update({
-    id: AccessDecoded.sessionId,
-    UserId,
-    valid: false,
-  });
+  if (!AccessDecoded || !RefreshDecoded) return res.sendStatus(401);
+  // invalidate refresh token
+  // invalidate access token
+  Promise.all([
+    await update({
+      id: RefreshDecoded.sessionId,
+      UserId,
+      valid: false,
+    }),
+    await update({
+      id: AccessDecoded.sessionId,
+      UserId,
+      valid: false,
+    }),
+  ]);
 
   return res.status(200).send({ message: "logout successful" });
 }

@@ -13,7 +13,7 @@ export async function update({
     const exists = await prisma.session.count({
       where: { id: id?.toString(), UserId },
     });
-    if (exists > 0) {
+    if (exists === 0) {
       return Result.err(
         new ApiError(ApiErrorType.NotFound, "Session not found"),
       );
