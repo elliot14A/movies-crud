@@ -1,18 +1,19 @@
-import { Result } from "@badrap/result";
-import { Prisma, User } from "@prisma/client";
-import prisma from "../../utils/database";
+import { Prisma } from "@prisma/client";
+import { Movie } from ".";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ApiError, ApiErrorType } from "../../error";
+import { Result } from "@badrap/result";
+import prisma from "../../utils/database";
 
-export async function details(
-  where: Prisma.UserWhereInput,
-): Promise<Result<User>> {
+export async function details(where: Prisma.MovieWhereInput): Promise<Movie> {
   try {
-    const user = await prisma.user.findFirst({ where });
-    if (!user) {
-      return Result.err(new ApiError(ApiErrorType.NotFound, "User not found"));
+    const movie = await prisma.movie.findFirst({ where });
+    if (!movie) {
+      return Result.err(
+        new ApiError(ApiErrorType.NotFound, "Session not found"),
+      );
     }
-    return Result.ok(user);
+    return Result.ok(movie);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       return Result.err(

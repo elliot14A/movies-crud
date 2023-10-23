@@ -1,0 +1,58 @@
+[
+  {
+    "id": "movies-crud:server:anonymous",
+    "upstream": {
+      "preserve_host": true,
+      "url": "http://server:8080",
+      "strip_path": "/.taskphin/movies-crud/server"
+    },
+    "match": {
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/auth/<login|register>",
+      "methods": ["POST"]
+    },
+    "authenticators": [
+      {
+        "handler": "anonymous"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [
+      {
+        "handler": "noop"
+      }
+    ]
+  },
+  {
+    "id": "movies-crud:server:protected",
+    "upstream": {
+      "preserve_host": true,
+      "url": "http://server:8080",
+      "strip_path": "/.taskphin/movies-crud/server"
+    },
+    "match": {
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/health",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    },
+    "authenticators": [
+      {
+        "handler": "cookie_session"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [
+      {
+        "handler": "header",
+        "config": {
+          "headers": {
+            "X-User": "{{ print .Subject }}",
+            "X-Access-Token": "{{ print .Extra.new_access_token }}"
+          }
+        }
+      }
+    ]
+  }
+]

@@ -30,5 +30,13 @@ export const updateUserSchema = z
     message: "At least one field is required",
   });
 
+export const loginUserSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
+    password: z.string().min(6, "password should contain atleast 6 chars"),
+  }),
+});
+
+export type LoginUserSchema = z.infer<typeof loginUserSchema>;
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;

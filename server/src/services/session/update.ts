@@ -28,8 +28,10 @@ export async function update({
     return Result.ok(sessionUpdated);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
-      e.code;
-      new ApiError(ApiErrorType.InternalServerError, e.message);
+      console.log(e.code);
+      return Result.err(
+        new ApiError(ApiErrorType.InternalServerError, e.message),
+      );
     }
     return Result.err(
       new ApiError(ApiErrorType.InternalServerError, "Unknown Error Occured"),

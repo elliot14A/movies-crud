@@ -18,6 +18,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Session   Session[]
+  Movie     Movie[]
 }
 
 model Session {
@@ -25,4 +26,17 @@ model Session {
   valid  Boolean
   User   User    @relation(fields: [UserId], references: [id])
   UserId String
+}
+
+model Movie {
+  id        String   @unique @default(uuid())
+  title     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [UserId], references: [id])
+  UserId    String
+  imageUrl  String
+  cast      String[]
+  genre     String
+  release   String
 }

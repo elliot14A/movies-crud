@@ -1,34 +1,42 @@
 import { Prisma } from "@prisma/client";
+import { Movie } from ".";
 import prisma from "../../utils/database";
 import { Result } from "@badrap/result";
 import { ApiError, ApiErrorType } from "../../error";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { User } from ".";
-import { omit } from "lodash";
 
 export async function create({
-  email,
-  name,
-  password,
-}: Prisma.UserCreateInput): Promise<User> {
+  title,
+  genre,
+  cast,
+  UserId,
+  User,
+  imageUrl,
+  release,
+}: Prisma.MovieCreateInput & { UserId: string }): Promise<Movie> {
   try {
-    const exists = await prisma.user.count({ where: { email } });
-    if (exists > 0) {
+    const exists = await prisma.movie.count({
+      where: { title, UserId },
+    });
+    if (exists) {
       return Result.err(
         new ApiError(
           ApiErrorType.EntityAlreadyExist,
-          `User with the same email:${email} already exists`,
+          `movie with same title: ${title} already exist`,
         ),
       );
     }
-    const user = await prisma.user.create({
+    const movie = await prisma.movie.create({
       data: {
-        name,
-        password,
-        email,
+        title,
+        genre,
+        cast,
+        User,
+        imageUrl,
+        release,
       },
     });
-    return Result.ok(omit(user, "password"));
+    return Result.ok(movie);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === "P2002") {

@@ -1,6 +1,7 @@
 log:
   level: debug
   format: json
+  leak_sensitive_values: true
 
 serve:
   proxy:
@@ -49,6 +50,10 @@ access_rules:
     - file:///etc/config/oathkeeper/access-rules/server.json
     - file:///etc/config/oathkeeper/access-rules/web.json
 
+authorizers:
+  allow:
+    enabled: true
+
 authenticators:
   anonymous:
     enabled: true
@@ -58,9 +63,18 @@ authenticators:
   cookie_session:
     enabled: true
     config:
-      check_session_url: http://server:8080/sessions/whoami
-      preserve_path: true
+      check_session_url: http://server:8080/api/sessions/whoami
       extra_from: "@this"
-      subject_from: "identity.id"
+      preserve_path: true
       only:
         - movies_crud_session
+
+mutators:
+  header:
+    enabled: true
+    config:
+      headers:
+        X-User: "{{ print .Subject }}"
+        X-Access-Token: "{{ print .Extra.new_access_token }}"
+  noop:
+    enabled: true

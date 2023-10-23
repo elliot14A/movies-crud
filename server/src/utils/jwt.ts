@@ -2,16 +2,25 @@ import jwt from "jsonwebtoken";
 import logger from "./logger";
 
 export interface Claims {
-  id: string;
+  email: string;
   userId: string;
   sessionId: string;
 }
 
+export enum TokenType {
+  AccessToken,
+  RefreshToken,
+}
+
 export function signJwt(
   payload: Claims,
+  tokenType: TokenType,
   options?: jwt.SignOptions | undefined,
 ) {
-  const secret = process.env.JWT_SECRET;
+  const secret =
+    tokenType === TokenType.AccessToken
+      ? process.env.ACCESS_KEY_JWT_SECRET
+      : process.env.REFRESH_KEY_JWT_SECRET;
   if (!secret) {
     logger.error("private key is not set");
     process.exit();
@@ -21,8 +30,11 @@ export function signJwt(
   });
 }
 
-export function verifyJwt(token: string) {
-  const secret = process.env.JWT_SECRET;
+export function verifyJwt(token: string, tokenType: TokenType) {
+  const secret =
+    tokenType === TokenType.AccessToken
+      ? process.env.ACCESS_KEY_JWT_SECRET
+      : process.env.REFRESH_KEY_JWT_SECRET;
   if (!secret) {
     logger.error("private key is not set");
     process.exit();

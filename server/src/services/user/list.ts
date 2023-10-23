@@ -10,7 +10,9 @@ export async function list(): Promise<Result<User[]>> {
     return Result.ok(users);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
-      new ApiError(ApiErrorType.InternalServerError, e.message);
+      return Result.err(
+        new ApiError(ApiErrorType.InternalServerError, e.message),
+      );
     }
     return Result.err(
       new ApiError(ApiErrorType.InternalServerError, "Unknown Error Occured"),

@@ -13,9 +13,6 @@ RUN apk add git \
   jq \
   && update-ca-certificates
 
-RUN mkdir -p /app
-WORKDIR /app
-
 COPY ./package.json ./
 
 RUN npm install --frozen-lockfile
@@ -24,6 +21,8 @@ RUN npm install --frozen-lockfile
 COPY ./src ./
 COPY ./prisma ./
 COPY ./tsconfig.json ./
+
+RUN npx prisma generate
 
 RUN npm run build
 
