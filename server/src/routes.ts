@@ -18,6 +18,7 @@ import {
   updateMovieSchema,
 } from "./schemas/movie";
 import logout from "./controllers/session/logout";
+import userDetails from "./controllers/user/details";
 
 function authRouter(): express.Router {
   const router = express.Router();
@@ -57,6 +58,7 @@ export function routes(): express.Router {
   router.use("/sessions", sessionRoutes());
   router.use("/movies", movieRoutes());
   router.post("/auth/logout", authGuard(), logout);
+  router.get("/user", authGuard(), userDetails);
 
   return router;
 }

@@ -32,7 +32,7 @@
       "strip_path": "/.taskphin/movies-crud/server"
     },
     "match": {
-      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/<(protected|movies/.*|auth/logout)>",
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/server/api/<(user|protected|movies/.*|auth/logout)>",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"]
     },
     "authenticators": [
