@@ -1,101 +1,122 @@
 "use client";
-import { register } from "@/actions/user/register";
-import { Button } from "@/components/ui/button";
+
+import Button from "@/components/ui/Button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { CreateUserSchema, createUserSchema } from "@/lib/zod/schemas/user";
+  RegisterCredentials,
+  registerCredentialsSchema,
+} from "@/lib/validators";
+import { FC, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC } from "react";
-import { useForm } from "react-hook-form";
+import registerAction from "@/actions/auth/register";
 import toast from "react-hot-toast";
+import { basePath } from "@/lib/constants";
 
-const Page: FC = () => {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
-  const form = useForm<CreateUserSchema>({
-    resolver: zodResolver(createUserSchema),
+interface PageProps { }
+
+const Page: FC<PageProps> = () => {
+  const [isLoading, setIsLoading] = useState<boolean>();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<RegisterCredentials>({
+    resolver: zodResolver(registerCredentialsSchema),
   });
   const router = useRouter();
-  const onSubmit = async (data: CreateUserSchema) => {
-    const responseResult = await register(data);
-    if (responseResult.isOk) {
-      toast.success("Account created successfully");
-      form.reset();
-      router.replace("/auth/login");
+  const registerUser: SubmitHandler<RegisterCredentials> = async (data) => {
+    setIsLoading(true);
+    const result = await registerAction(data);
+    if (result.isErr) {
+      toast.error(result.error.message);
     } else {
-      const error = responseResult.error;
-      toast.error(error.message);
+      toast.success("Registered successfully");
+      router.push("/auth/login");
     }
+    setIsLoading(false);
   };
   return (
-    <div className="flex h-screen flex-col items-center justify-center py-12 sm:px-6 lg:px-8 bg-gray-100">
-      <div className="-mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <h1
-          className="
-          text-center
-          text-2xl
-          font-bold
-          tracking-tight
-          sm:text-left
-          sm:m-4
-          "
+    <div className="container flex flex-col items-center justify-center">
+      <div className="m-12 flex items-center justify-center">
+        <p className="text-3xl text-red-600">Movies</p>
+        <p className="text-2xl font-semibold mt-[0.3rem]">Crud</p>
+      </div>
+      <div className="w-full">
+        <form
+          className="container w-full max-w-sm mx-auto mt-8"
+          onSubmit={handleSubmit(registerUser)}
         >
-          Create an account
-        </h1>
-        <div className="mt-10 m-4 rounded-lg shadow-lg  p-6">
-          <Form {...form}>
-            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-md">Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="abc@email.com" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              {form.formState.errors.email ? (
-                <h1 className="text-xs italic text-red-600">
-                  {form.formState.errors.email.message}
-                </h1>
-              ) : (
-                ""
-              )}
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-md">Password</FormLabel>
-                    <FormControl>
-                      <Input placeholder="******" type="password" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              {form.formState.errors.password ? (
-                <h1 className="text-xs italic text-red-600">
-                  {form.formState.errors.password.message}
-                </h1>
-              ) : (
-                ""
-              )}
-              <Button className="w-full">Submit</Button>
-            </form>
-          </Form>
-        </div>
-        <a href={basePath + "/auth/login"}>
-          <div className="text-right mr-4 underline">or login here</div>
-        </a>
+          <div className="mb-8 font-bold text-3xl ">Hey There!</div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="password"
+            >
+              Fullname
+            </label>
+            <input
+              type="text"
+              id="text"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:ring-black focus:border-black"
+              {...register("name")}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs italic">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              type="text"
+              id="email"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:ring-black focus:border-black"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs italic">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="password"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:ring-black focus:border-black"
+              {...register("password")}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs italic">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center justify-between">
+            <Button isLoading={isLoading} className="w-full">
+              Register
+            </Button>
+          </div>
+          <p className="text-sm text-gray-500 text-center m-10">
+            Registered?
+            <a href={basePath + "/auth/login"} className="pl-1 text-blue-600">
+              Login to your account
+            </a>
+          </p>
+        </form>
       </div>
     </div>
   );

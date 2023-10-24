@@ -1,11 +1,13 @@
+"use client";
+
 import { FC } from "react";
 import { Toaster } from "react-hot-toast";
 
-interface ProviderProps {
+interface ProvidersProps {
   children: React.ReactNode;
 }
 
-const Provider: FC<ProviderProps> = ({ children }) => {
+const Provider: FC<ProvidersProps> = ({ children }) => {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />

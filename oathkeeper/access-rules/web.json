@@ -6,7 +6,7 @@
       "url": "http://web:3000"
     },
     "match": {
-      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/web/home",
+      "url": "http://127.0.0.1:4455/.taskphin/movies-crud/web/home/<.*>",
       "methods": ["GET", "POST", "DELETE"]
     },
     "authenticators": [
