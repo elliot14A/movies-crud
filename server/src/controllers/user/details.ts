@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { details as detailsService } from "../../services/user/details";
 import { ApiError, ApiErrorType } from "../../error";
+import { omit } from "lodash";
 
 export default async function details(
   _: Request,
@@ -10,7 +11,8 @@ export default async function details(
 
   const userResult = await detailsService({ id: UserId });
   if (userResult.isOk) {
-    return res.status(200).send(userResult.value);
+    const user = omit(userResult.value, "password");
+    return res.status(200).send(user);
   } else {
     const err = userResult.error;
     if (err instanceof ApiError) {

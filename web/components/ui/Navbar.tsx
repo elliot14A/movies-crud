@@ -1,10 +1,17 @@
-import { FC } from "react";
+"use client";
+import { FC, useState } from "react";
 import Button from "./Button";
 import Link from "next/link";
-import { DEFAULT_PICTURE_URL } from "@/lib/constants";
-import Image from "next/image";
+import { User } from "@/lib/types/user";
+import logoutAction from "@/actions/auth/logout";
+import { useCookies } from "next-client-cookies";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-export const Navbar: FC = () => {
+export const Navbar: FC<User> = ({ email, name }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const cookies = useCookies();
+  const router = useRouter();
   return (
     <nav className="bg-white border-gray-200">
       <div className="max-w-screen flex flex-wrap items-center justify-between">
@@ -18,24 +25,35 @@ export const Navbar: FC = () => {
         </div>
         <ul className="font-medium flex space-x-8 mt-0 border-0 bg-white p-4">
           <li>
-            <Button className="p-4" size="small">
-              Upgrade
-            </Button>
+            <div className="relative pt-1">
+              <div className="relative mt-1">
+                logged in as {name ? name : email}
+              </div>
+            </div>
           </li>
           <li>
-            <Link href="/home/profile">
-              <div className="relative pt-1">
-                <div className="relative w-8 h-8">
-                  <Image
-                    fill
-                    referrerPolicy="no-referrer"
-                    src={DEFAULT_PICTURE_URL}
-                    alt="profile picture"
-                    className="rounded-full"
-                  />
-                </div>
-              </div>
-            </Link>
+            <Button
+              onClick={async () => {
+                setLoading(true);
+                const result = await logoutAction();
+                if (result.isOk) {
+                  toast.success("Logout successful");
+                  cookies.remove("accessToken");
+                  cookies.remove("refreshToken");
+                  router.replace("/auth/login");
+                } else {
+                  const error = result.error;
+                  console.log(error);
+                  toast.error(error.message);
+                }
+                setLoading(false);
+              }}
+              isLoading={loading}
+              className="p-4 bg-red-500"
+              size="small"
+            >
+              Logout
+            </Button>
           </li>
         </ul>
       </div>

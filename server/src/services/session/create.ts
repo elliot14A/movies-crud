@@ -9,10 +9,11 @@ export async function create({
   User,
 }: Prisma.SessionCreateInput): Promise<Result<Session>> {
   try {
-    const user = await prisma.session.create({
+    const session = await prisma.session.create({
       data: { valid, User },
     });
-    return Result.ok(user);
+    console.log(session);
+    return Result.ok(session);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       return Result.err(

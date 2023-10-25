@@ -11,8 +11,8 @@ export default async function logout(
   const cookies = req.headers.cookie;
   if (!cookies) return res.status(401);
   const cookieJson = cookie.parse(cookies);
-  const accessToken = cookieJson["movies-crud-session-cookie"];
-  const refreshToken = cookieJson["movies-crud-refresh-cookie"];
+  const accessToken = cookieJson["accessToken"];
+  const refreshToken = cookieJson["refreshToken"];
 
   const { decoded: AccessDecoded } = verifyJwt(
     accessToken,

@@ -8,8 +8,8 @@ export async function whoami(req: Request, res: Response) {
   let cookiesJSON = cookie.parse(cookies || "");
   // check for movies_crud_session cookie
   // if not present, return 401
-  const accessToken = cookiesJSON["movies-crud-session-cookie"];
-  const refreshToken = cookiesJSON["movies-crud-refresh-cookie"];
+  const accessToken = cookiesJSON["accessToken"];
+  const refreshToken = cookiesJSON["refreshToken"];
   let response: Record<string, any> = {};
   if (!accessToken) {
     return res.status(401).json({ message: "Unauthorized" });

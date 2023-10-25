@@ -28,8 +28,6 @@ services:
       - /app/node_modules
       - /app/prisma
     restart: unless-stopped
-    ports:
-      - "8080:8080"
     stdin_open: true
     environment:
       - DATABASE_URL=postgres://postgres:postgres@database:5432/postgres?schem=public
@@ -43,7 +41,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - type: bind
         source: ./web
@@ -55,8 +53,6 @@ services:
       - NEXT_PUBLIC_BASE_PATH=/.taskphin/movies-crud/web
       - NEXT_PUBLIC_SERVER_URL=http://127.0.0.1:4455/.taskphin/movies-crud/server
     stdin_open: true
-    ports:
-      - "3000:3000"
     networks:
       - movies-crud
 

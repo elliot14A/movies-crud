@@ -1,17 +1,13 @@
-import { serverUrl } from "@/lib/constants";
-import { User } from "@/lib/types/user";
-import { Result } from "@badrap/result";
 import axios, { AxiosError } from "axios";
+import { Result } from "@badrap/result";
+import { serverUrl } from "@/lib/constants";
 
-export default async function details(): Promise<
-  Result<User & { newAccessToken?: string }>
-> {
+export default async function list() {
   try {
-    const res = await axios.get(serverUrl + "/api/user", {
+    const res = await axios.get(serverUrl + "/api/movies/", {
       withCredentials: true,
     });
-    let result = res.data;
-    return Result.ok(result);
+    return Result.ok(res.data);
   } catch (error) {
     if (error instanceof AxiosError) {
       const response = error.response;

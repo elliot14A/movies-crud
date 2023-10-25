@@ -1,17 +1,19 @@
 import { serverUrl } from "@/lib/constants";
-import { User } from "@/lib/types/user";
+import { CreateMovieSchema } from "@/lib/types/movie";
 import { Result } from "@badrap/result";
 import axios, { AxiosError } from "axios";
 
-export default async function details(): Promise<
-  Result<User & { newAccessToken?: string }>
-> {
+export default async function create(data: CreateMovieSchema) {
   try {
-    const res = await axios.get(serverUrl + "/api/user", {
+    const payload = {
+      ...data,
+      imageUrl: "https://picsum.photos/200/300",
+      cast: data.cast.split(","),
+    };
+    const res = await axios.post(serverUrl + "/api/movies/", payload, {
       withCredentials: true,
     });
-    let result = res.data;
-    return Result.ok(result);
+    return Result.ok(res);
   } catch (error) {
     if (error instanceof AxiosError) {
       const response = error.response;

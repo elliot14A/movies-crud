@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Provider from "@/components/ui/Provider";
+import Provider from "@/components/Provider";
+import { ClientCookiesProvider } from "@/components/CookiesProvider";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Provider>{children}</Provider>
+        <ClientCookiesProvider value={cookies().getAll()}>
+          <Provider>{children}</Provider>
+        </ClientCookiesProvider>
       </body>
     </html>
   );

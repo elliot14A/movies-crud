@@ -21,15 +21,15 @@ const Page: FC<PageProps> = () => {
   } = useForm<LoginCredentials>({
     resolver: zodResolver(loginCredentialsSchema),
   });
-  const router = useRouter();
   const cookies = useCookies();
+  const router = useRouter();
   const login: SubmitHandler<LoginCredentials> = async (data) => {
     setIsLoading(true);
     const result = await loginAction(data);
     if (result.isOk) {
-      const { refreshToken, accessToken } = result.value;
-      cookies.set("movies-crud-session-cookie", accessToken);
-      cookies.set("movies-crud-refresh-cookie", refreshToken);
+      const { accessToken, refreshToken } = result.value;
+      cookies.set("accessToken", accessToken, {});
+      cookies.set("refreshToken", refreshToken, {});
       toast.success("Logged in successfully");
       router.replace("/home/movies");
     } else {

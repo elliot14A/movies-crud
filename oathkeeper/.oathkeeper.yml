@@ -67,8 +67,8 @@ authenticators:
       extra_from: "@this"
       preserve_path: true
       only:
-        - movies-crud-session-cookie
-        - movies-crud-refresh-cookie
+        - accessToken
+        - refreshToken
 
 mutators:
   header:
