@@ -14,7 +14,6 @@
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.1.1",
     "@types/aws-sdk": "^2.7.0",
-    "aws-sdk": "^2.1479.0",
     "axios": "^1.5.1",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.288.0",

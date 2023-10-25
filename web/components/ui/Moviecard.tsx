@@ -27,7 +27,7 @@ const Moviecard: FC<{ movie: MovieType }> = ({
                   }}
                   className="h-6 w-6"
                 />
-                <Link href={`/home/movies/${id}/`}>
+                <Link href={`/home/movies/${id}/edit`}>
                   <Edit className="h-6 w-6" />
                 </Link>
               </div>
