@@ -43,7 +43,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - type: bind
         source: ./web

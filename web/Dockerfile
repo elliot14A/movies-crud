@@ -1,30 +1,20 @@
-# Install dependencies only when needed
-FROM node:latest AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+FROM node:latest
+
+# ENV PORT 7770
+
+# Create app directory
+RUN mkdir -p /app
 WORKDIR /app
-COPY package.json ./
-RUN yarn install
 
-# Rebuild the source code only when needed
-FROM node:latest AS builder
+# Copying source files
+COPY . /app
 
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Installing dependencies
+RUN npm install --legacy-peer-deps
 
-COPY . .
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
-RUN npx prisma generate
+# Building app
+# RUN npm run build
+EXPOSE 3000 
 
-# Production image, copy all the files and run next
-FROM node:latest AS runner
-WORKDIR /app
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-EXPOSE 3000
-
-# Next.js collects completely anonymous telemetry data about general usage.
-CMD ["yarn", "start"]
+# Running the app
+CMD "npm" "run" "dev"
